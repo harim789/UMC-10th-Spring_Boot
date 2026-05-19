@@ -11,10 +11,4 @@ public class MissionReqDTO {
             @NotNull(message = "완료 여부는 필수입니다.")
             Boolean completed
     ) {}
-
-    @Builder
-    public record MyInProgressMissionRequest(
-            @NotNull(message = "사용자 ID는 필수입니다.")
-            Long memberId
-    ) {}
 }

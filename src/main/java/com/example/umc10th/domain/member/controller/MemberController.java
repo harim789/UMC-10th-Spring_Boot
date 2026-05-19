@@ -6,15 +6,16 @@ import com.example.umc10th.domain.member.exception.code.MemberSuccessCode;
 import com.example.umc10th.domain.member.service.MemberService;
 import com.example.umc10th.global.apiPayload.ApiResponse;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDate;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
+@Validated
 public class MemberController {
 
     private final MemberService memberService;
@@ -38,8 +39,13 @@ public class MemberController {
     @GetMapping("/home")
     public ApiResponse<MemberResDTO.Home> getHome(
             @RequestParam Long memberId,
-            @RequestParam(defaultValue = "0") Integer page,
-            @RequestParam(defaultValue = "10") Integer size
+            @RequestParam(defaultValue = "0")
+            @Min(value = 0, message = "page는 0 이상이어야 합니다.")
+            Integer page,
+            @RequestParam(defaultValue = "10")
+            @Min(value = 1, message = "size는 1 이상이어야 합니다.")
+            @Max(value = 100, message = "size는 100 이하여야 합니다.")
+            Integer size
     ) { // @RequestParam: URL 뒤에 붙는 쿼리 파라미터를 받을 때 쓴다.
         MemberResDTO.Home result = memberService.getHome(memberId, page, size);
         return ApiResponse.onSuccess(MemberSuccessCode.GET_HOME, result);

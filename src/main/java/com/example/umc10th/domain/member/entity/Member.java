@@ -27,7 +27,7 @@ public class Member extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY) // PK 값을 개발자가 직접 넣는 게 아닌 DB가 자동으로 생성하도록 설정
     private Long id;
 
-    @Column(nullable = false, length = 5)
+    @Column(nullable = false, length = 50)
     private String name;
 
     @Enumerated(EnumType.STRING)
@@ -38,7 +38,7 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private LocalDate birth;
 
-    @Column(nullable = false, length = 10)
+    @Column(nullable = false, length = 30)
     private String nickname;
 
     @Enumerated(EnumType.STRING)

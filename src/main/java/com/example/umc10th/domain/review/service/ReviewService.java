@@ -76,15 +76,24 @@ public class ReviewService {
         boolean isFirstPage = (cursor == null || cursor.isBlank() || "-1".equals(cursor));
         Slice<Review> reviewSlice;
 
-        if ("star".equals(sort)) {
+        if ("star".equalsIgnoreCase(sort)) {
             // 별점 순
             if (isFirstPage) {
                 reviewSlice = reviewRepository.findFirstSliceByStarDesc(memberId, pageable);
             } else {
                 // cursor 형식: "별점_ID" (ex) 4.5_16)
                 String[] parts = cursor.split("_");
-                BigDecimal cursorStar = new BigDecimal(parts[0]);
-                Long cursorId = Long.parseLong(parts[1]);
+                if (parts.length != 2) {
+                    throw new ReviewException(ReviewErrorCode.INVALID_CURSOR_FORMAT);
+                }
+                BigDecimal cursorStar;
+                Long cursorId;
+                try {
+                    cursorStar = new BigDecimal(parts[0]);
+                    cursorId = Long.parseLong(parts[1]);
+                } catch (NumberFormatException e) {
+                    throw new ReviewException(ReviewErrorCode.INVALID_CURSOR_FORMAT);
+                }
                 reviewSlice = reviewRepository.findNextSliceByStarDesc(memberId, cursorStar, cursorId, pageable);
             }
         } else {
@@ -92,7 +101,12 @@ public class ReviewService {
             if (isFirstPage) {
                 reviewSlice = reviewRepository.findFirstSliceByMemberId(memberId, pageable);
             } else {
-                Long cursorId = Long.parseLong(cursor);
+                Long cursorId;
+                try {
+                    cursorId = Long.parseLong(cursor);
+                } catch (NumberFormatException e) {
+                    throw new ReviewException(ReviewErrorCode.INVALID_CURSOR_FORMAT);
+                }
                 reviewSlice = reviewRepository.findNextSliceByMemberId(memberId, cursorId, pageable);
             }
         }
