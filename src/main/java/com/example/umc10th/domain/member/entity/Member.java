@@ -48,12 +48,17 @@ public class Member extends BaseEntity {
     @Column(name = "detail_address", nullable = false, length = 255)
     private String detailAddress;
 
-    @Column(name = "social_uid", nullable = false, length = 255)
+    @Column(name = "social_uid", length = 255)
     private String socialUid;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "social_type", nullable = false)
-    private SocialType socialType;
+    @Builder.Default
+    private SocialType socialType = SocialType.LOCAL;
+
+    // BCrypt 해시 결과는 60자 고정이지만, 알고리즘 변경 대비 여유롭게 100자로 설정
+    @Column(nullable = false, length = 100)
+    private String password;
 
     @Column(nullable = false)
     @Builder.Default
@@ -66,8 +71,10 @@ public class Member extends BaseEntity {
     private String phoneNumber;
 
     // columnDefinition = "TEXT": 255자 이상의 대용량 텍스트 저장 가능 타입으로 지정
+    // 기본 프로필 URL - 회원가입 시 따로 안 받으므로 기본값 박기
     @Column(name = "profile_url", columnDefinition = "TEXT", nullable = false)
-    private String profileUrl;
+    @Builder.Default
+    private String profileUrl = "https://default-profile.example.com/default.png";
 
     // 연관 관계
     @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)

@@ -25,13 +25,7 @@ public class MemberController {
     public ApiResponse<MemberResDTO.SignUp> signUp(
             @Valid @RequestBody MemberReqDTO.SignUp request
     ) {
-        // 6주차에서 memberService.signUp(request)로 교체
-        MemberResDTO.SignUp result = MemberResDTO.SignUp.builder()
-                .memberId(1L)
-                .nickname(request.nickname())
-                .email(request.email())
-                .build();
-
+        MemberResDTO.SignUp result = memberService.signUp(request);
         return ApiResponse.onSuccess(MemberSuccessCode.SIGN_UP, result);
     }
 

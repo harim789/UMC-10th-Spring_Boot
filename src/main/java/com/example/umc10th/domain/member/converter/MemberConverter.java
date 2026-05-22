@@ -1,14 +1,43 @@
 package com.example.umc10th.domain.member.converter;
 
+import com.example.umc10th.domain.member.dto.MemberReqDTO;
 import com.example.umc10th.domain.member.dto.MemberResDTO;
 import com.example.umc10th.domain.member.entity.Member;
+import com.example.umc10th.domain.member.enums.Gender;
 import com.example.umc10th.domain.mission.entity.mapping.MemberMission;
 import com.example.umc10th.global.dto.PageInfoDTO;
+import com.example.umc10th.global.enums.Address;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
 
 public class MemberConverter {
+
+    // 회원가입: 요청 DTO -> Member 엔티티
+    public static Member toMember(MemberReqDTO.SignUp request, String encodedPassword) {
+        return Member.builder()
+                .name(request.name())
+                .nickname(request.nickname())
+                .email(request.email())
+                .password(encodedPassword)
+                .phoneNumber(request.phoneNumber())
+                .gender(Gender.valueOf(request.gender()))
+                .birth(request.birth())
+                .address(Address.valueOf(request.address()))
+                .detailAddress(request.detailAddress())
+                // socialType, profileUrl, point는 엔티티의 @Builder.Default로 자동 처리
+                // (LOCAL, 기본 프로필 URL, 0)
+                .build();
+    }
+
+    // 회원가입: 저장된 Member 엔티티 -> 회원가입 응답 DTO
+    public static MemberResDTO.SignUp toSignupResponse(Member member) {
+        return MemberResDTO.SignUp.builder()
+                .memberId(member.getId())
+                .nickname(member.getNickname())
+                .email(member.getEmail())
+                .build();
+    }
 
     // 마이페이지 변환
     public static MemberResDTO.MyPage toMyPage(Member member) {
